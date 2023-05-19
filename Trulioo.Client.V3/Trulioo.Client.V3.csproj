@@ -11,8 +11,8 @@
 	<Description>Trulioo.Client.V3 SDK</Description>
 	<Product>Trulioo.Client.V3</Product>
 
-    <PackageId>Trulioo.V3.Client.NET</PackageId>
-    <Title>Trulioo V3 Client for .NET</Title>
+    <PackageId>Trulioo.Client.V3</PackageId>
+    <Title>Trulioo Client V3 for .NET</Title>
     <Owners>Trulioo, Inc.</Owners>
     <IconUrl>http://api.trulioo.com/skins/trulioo/images/icon-default.png</IconUrl>
     <LicenseUrl>https://github.com/trulioo/trulioo-sdk-csharp/blob/master/LICENSE</LicenseUrl>

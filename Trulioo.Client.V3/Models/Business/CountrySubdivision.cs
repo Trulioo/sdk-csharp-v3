@@ -19,5 +19,10 @@ namespace Trulioo.Client.V3.Models.Business
         /// Code of the parent entity
         /// </summary>
         public string ParentCode { get; set; }
+
+        /// <summary>
+        /// Code for the country
+        /// </summary>
+        public string CountryCode { get; set; }
     }
 }

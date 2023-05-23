@@ -1,6 +1,6 @@
 # Trulioo SDK v3 for C# #
 
-## Version 1.0.1.0
+## Version 1.0.2.0
 
 The Trulioo Software Development Kit (SDK) v3 for C# contains library code designed to enable developers to customize the integration of GlobalGateway into your automated business processes or website.
 
@@ -27,7 +27,7 @@ var responseString = await truliooClient.Connection.TestAuthenticationAsync();
 #### Development environment
 
 ##### Visual Studio
-The Trulioo SDK v3 for C# supports development in [Microsoft Visual Studio 2019](https://visualstudio.microsoft.com/).
+The Trulioo SDK v3 for C# supports development in [Microsoft Visual Studio](https://visualstudio.microsoft.com/).
 
 ### Documentation and resources
 

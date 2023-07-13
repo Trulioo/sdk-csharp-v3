@@ -29,10 +29,15 @@ namespace Trulioo.Client.V3
         /// </summary>
         public Verification Verification { get; }
 
+        /// <summary>
+        /// Gets the <see cref="Configuration"/> instance for this <see cref="TruliooApiClient"/>.
+        /// </summary>
+        public Configuration Configuration { get; }
+
         #endregion
 
         #region Private Fields
-        
+
         private bool _disposed;
 
         #endregion
@@ -54,6 +59,7 @@ namespace Trulioo.Client.V3
             TruliooBusiness = new TruliooBusiness(this);
             Verification = new Verification(this);
             Connection = new Connection(this);
+            Configuration = new Configuration(this);
         }
 
         /// <summary>

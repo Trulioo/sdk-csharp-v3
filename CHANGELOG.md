@@ -1,5 +1,7 @@
 # Trulioo SDK for C# Changelog
 
+test push
+
 ## Version 1.0.9.0
 Added new document types
 	- CompletePlus

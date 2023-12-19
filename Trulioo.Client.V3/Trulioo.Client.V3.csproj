@@ -4,25 +4,6 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>Trulioo.Client.V3</RootNamespace>
     <OutputType>Library</OutputType>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-	<Version>1.0.0.1</Version>
-    <Authors>Trulioo Inc.</Authors>
-    <Company>Trulioo Inc.</Company>
-	<Description>Trulioo.Client.V3 SDK</Description>
-	<Product>Trulioo.Client.V3</Product>
-
-    <PackageId>Trulioo.Client.V3</PackageId>
-    <Title>Trulioo Client V3 for .NET</Title>
-    <Owners>Trulioo, Inc.</Owners>
-    <IconUrl>http://api.trulioo.com/skins/trulioo/images/icon-default.png</IconUrl>
-    <LicenseUrl>https://github.com/trulioo/trulioo-sdk-csharp/blob/master/LICENSE</LicenseUrl>
-    <ProjectUrl>https://github.com/trulioo/trulioo-sdk-csharp</ProjectUrl>
-    <RequireLicenseAcceptance>false</RequireLicenseAcceptance>
-    <Description>This package contains the Trulioo V3 Client for consuming Trulioo's API V3.</Description>
-    <Copyright>2023 Trulioo</Copyright>
-    <Tags>Trulioo</Tags>
-    <Language>en-US</Language>
-	
   </PropertyGroup>
 
   <ItemGroup>

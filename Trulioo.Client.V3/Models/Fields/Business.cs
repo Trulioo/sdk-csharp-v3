@@ -155,16 +155,16 @@ namespace Trulioo.Client.V3.Models.Fields
         /// <summary>
         /// Whether or not to perform a complete plus transaction
         /// </summary>
-        public bool CompletePlus { get; set; }
+        public bool? CompletePlus { get; set; }
 
         /// <summary>
         /// Whether or not to retrieve article of authority document
         /// </summary>
-        public bool ArticleOfAuthority { get; set; }
+        public bool? ArticleOfAuthority { get; set; }
 
         /// <summary>
         /// Whether or not to retrieve agent address change document
         /// </summary>
-        public bool AgentAddressChange { get; set; }
+        public bool? AgentAddressChange { get; set; }
     }
 }

@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
+using Trulioo.Client.V3.Models.Business;
 using Trulioo.Client.V3.Models.Configuration;
 using Trulioo.Client.V3.URI;
 

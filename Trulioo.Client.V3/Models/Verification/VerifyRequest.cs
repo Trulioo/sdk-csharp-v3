@@ -73,6 +73,11 @@ namespace Trulioo.Client.V3.Models.Verification
         /// </summary>
         public bool VerboseMode { get; set; }
 
+        /// <summary>
+        /// Correlation ID for running batches
+        /// </summary>
+        public string BatchRecordID { get; set; }
+
         public ICollection<Metadata> RequestMetadata { get; set; }
 
         public class Metadata

@@ -31,7 +31,7 @@ namespace Trulioo.Client.V3
         /// Initializes a new instance of the <see cref="Verification"/> class.
         /// </summary>
         /// <param name="service">
-        /// An object representing the root of Trulioo configuration service.
+        /// An object representing the root of Trulioo verification service.
         /// </param>
         /// <exception cref="System.ArgumentNullException">
         /// <paramref name="service"/> is <c>null</c>.

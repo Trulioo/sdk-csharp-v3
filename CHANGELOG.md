@@ -1,5 +1,16 @@
 # Trulioo SDK for C# Changelog
 
+## Version 1.0.10.0
+Added new Configuration functions
+	- GetСonsentsAsync
+	- GetDetailedСonsentsAsync
+	- GetCountryCodesAsync
+	- GetCountrySubdivisionsAsync
+	- GetFieldsAsync
+	- GetRecommendedFieldsAsync
+	- GetTestEntitiesAsync
+	- GetDatasourcesAsync
+
 ## Version 1.0.9.0
 Added new document types
 	- CompletePlus

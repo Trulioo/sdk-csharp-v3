@@ -56,6 +56,18 @@ namespace Trulioo.Client.V3.Tests
             return client;
         }
 
+        public static async Task<TruliooApiClient> GetMockedTruliooClientAsync(HttpClientHandler mockHandler)
+        {
+            var context = new Context(ClientId, ClientSecret, TimeSpan.FromMinutes(2), mockHandler)
+            {
+                ApiHost = _apiHost,
+                AuthHost = _authHost
+            };
+            var client = new TruliooApiClient(context);
+            await client.UpdateCredentialsAsync();
+            return client;
+        }
+
         public static async Task<TruliooApiClient> GetTruliooKYBClientAsync()
         {
             var context = new Context(KybClientId, KybClientSecret)

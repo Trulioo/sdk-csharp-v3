@@ -14,7 +14,7 @@ namespace Trulioo.Client.V3
     {
         #region Private Properties
 
-        private const string _defaultDocumentFilename = "downoadDocument.pdf";
+        private const string _defaultDocumentFilename = "downloadDocument.pdf";
 
         private TruliooApiClient _service;
         private readonly Namespace _verificationNamespace = new Namespace("verifications");

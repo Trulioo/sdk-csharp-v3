@@ -1,10 +1,12 @@
-﻿using System.Text.Json;
+﻿using Newtonsoft.Json;
+using System.Net;
 using Trulioo.Client.V3.Enums;
 using Trulioo.Client.V3.Models.Errors;
 using Trulioo.Client.V3.Models.Fields;
 using Trulioo.Client.V3.Models.Response;
 using Trulioo.Client.V3.Models.Verification;
 using Xunit;
+using JsonSerializer = System.Text.Json.JsonSerializer;
 using Record = Trulioo.Client.V3.Models.Response.Record;
 
 namespace Trulioo.Client.V3.Tests
@@ -69,7 +71,17 @@ namespace Trulioo.Client.V3.Tests
             using var client = await BaseFact.GetTruliooClientAsync();
             var response = await client.Verification.GetTransactionRecordDocumentAsync(transactionRecordID, documentField);
             Assert.NotNull(response);
-            
+        }
+
+        [Fact]
+        public async Task MockedIdvVerificationTest()
+        {
+            using var client = await BaseFact.GetMockedTruliooClientAsync(new MockedVerificationHandler());
+            var response = await client.Verification.VerifyAsync(new VerifyRequest());
+
+            Assert.NotNull(response);
+            var appendedFields = response.Record.DatasourceResults.First().AppendedFields;
+            Assert.Equal("John", appendedFields.First(f => f.FieldName == "FirstName").Data);
         }
 
         #region Member Data
@@ -192,6 +204,77 @@ namespace Trulioo.Client.V3.Tests
             yield return new object[] { "transactionRecordId", "fieldName" };
         }
 
+        #endregion
+
+        #region Mocked MessageHandler
+
+        internal class MockedVerificationHandler : HttpClientHandler
+        {
+            protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+            {
+                if (request.RequestUri.ToString().EndsWith("/connect/token"))
+                {
+                    var content = new StringContent("{\"access_token\":\"xxxx-token-xxxx\",\"expires_in\":1800,\"token_type\":\"Bearer\",\"scope\":\"napi.api\"}");
+                    var response = new HttpResponseMessage { StatusCode = HttpStatusCode.OK, Content = content };
+                    return response;
+                }
+
+
+                if (request.RequestUri.ToString().EndsWith("/verifications/verify"))
+                {
+                    var verifyResult = new VerifyResult()
+                    {
+                        TransactionID = Guid.NewGuid().ToString(),
+                        UploadedDt = DateTime.Now,
+                        CompletedDt = DateTime.Now,
+                        CountryCode = BaseFact.CountryCode,
+                        ProductName = "Identity Verification",
+                        Record = new Record
+                        {
+                            TransactionRecordID = Guid.NewGuid().ToString(),
+                            RecordStatus = "match",
+                            DatasourceResults = new []
+                            {
+                                new DatasourceResult
+                                {
+                                    DatasourceName = "Mock Datasource",
+                                    DatasourceFields = new []
+                                    {
+                                        new DatasourceField
+                                        {
+                                            FieldName = "FirstName",
+                                            Status = "match"
+                                        }
+                                    },
+                                    AppendedFields = new []
+                                    {
+                                        new AppendedField
+                                        {
+                                            FieldName = "FirstName",
+                                            Data = "John"
+                                        }
+                                    },
+                                    Errors = Array.Empty<ServiceError>(),
+                                    FieldGroups = Array.Empty<string>()
+                                }
+                            },
+                            Errors = Array.Empty<ServiceError>(),
+                            Rule = new RecordRule
+                            {
+                                RuleName = "Mock Rule",
+                                Note = "Mock Rule"
+                            }
+                        },
+                        Errors = new List<ServiceError>(),
+
+                    };
+                    var content = new StringContent(JsonConvert.SerializeObject(verifyResult));
+                    var response = new HttpResponseMessage { StatusCode = HttpStatusCode.OK, Content = content };
+                    return response;
+                }
+                return new HttpResponseMessage(HttpStatusCode.BadRequest);
+            }
+        }
         #endregion
     }
 }

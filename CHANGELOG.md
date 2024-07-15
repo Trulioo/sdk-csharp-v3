@@ -1,5 +1,9 @@
 # Trulioo SDK for C# Changelog
 
+
+## Version 1.0.11.0
+Fix typo in download document filename
+
 ## Version 1.0.10.0
 Added new Configuration functions
 	- GetСonsentsAsync
@@ -10,6 +14,7 @@ Added new Configuration functions
 	- GetRecommendedFieldsAsync
 	- GetTestEntitiesAsync
 	- GetDatasourcesAsync
+Add BatchRecordID to VerifyRequest and BusinessVerifyRequest
 
 ## Version 1.0.9.0
 Added new document types

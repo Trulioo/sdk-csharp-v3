@@ -1,12 +1,15 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
-using Newtonsoft.Json;
+using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Web;
 using Trulioo.Client.V3.Compressor;
 using Trulioo.Client.V3.Exceptions;
 using Trulioo.Client.V3.Models;
@@ -29,7 +32,7 @@ namespace Trulioo.Client.V3
         /// <value>
         /// A Trulioo host name.
         /// </value>
-        public string ApiHost { get; set; } = "api.globaldatacompay.com";
+        public string ApiHost { get; set; } = "api.trulioo.com";
 
         /// <summary>
         /// Gets the Trulioo authentication host name associated with the current <see cref= "Context"/>.
@@ -37,16 +40,15 @@ namespace Trulioo.Client.V3
         /// <value>
         /// A Trulioo host name.
         /// </value>
-        public string AuthHost { get; set; } = "auth-api.globaldatacompany.com";
+        public string AuthHost { get; set; } = "auth-api.trulioo.com";
 
         public TruliooCredentials Credentials { get; set; }
 
         public TimeSpan UpdateBuffer = TimeSpan.FromMilliseconds(100);
+
         #endregion
 
         #region Private Fields and Properties
-
-        private const string _version = "v3";
 
         private bool _disposed;
         private static readonly JsonSerializerSettings _jsonSerializerSettings = new JsonSerializerSettings
@@ -148,17 +150,22 @@ namespace Trulioo.Client.V3
         /// <param name="processResponse">
         /// A function to handle the returned message
         /// </param>
+        /// </param>
+        /// <param name="cancellationToken">
+        /// Cancellation Token that can cancel asynchronous operation
+        /// </param>
         /// <returns>
         /// The response to the GET request.
         /// </returns>
-        internal async Task<TReturn> GetAsync<TReturn>(Namespace ns, ResourceName resource, Func<HttpResponseMessage, TReturn> processResponse = null)
+        internal async Task<TReturn> GetAsync<TReturn>(Namespace ns, ResourceName resource, Func<HttpResponseMessage, TReturn> processResponse = null, CancellationToken cancellationToken = default)
         {
-            var response = await sendAsync<TReturn>(HttpMethod.Get, ns, resource, processResponse: processResponse).ConfigureAwait(false);
+            var response = await sendAsync<TReturn>(HttpMethod.Get, ns, resource, processResponse: processResponse, cancellationToken: cancellationToken).ConfigureAwait(false);
             return response;
         }
 
         /// <summary>
-        /// Sends a POST request as an asynchronous operation.
+        /// Sends a GET request and returns the content copied into a MemoryStream as an asynchronous operation.
+        /// The original <see cref="HttpResponseMessage"/> and its underlying stream are disposed internally.
         /// </summary>
         /// <param name="ns">
         /// An object identifying a Trulioo services namespace.
@@ -166,14 +173,92 @@ namespace Trulioo.Client.V3
         /// <param name="resource">
         /// An object identifying a resource.
         /// </param>
-        /// <param name="content">
-        /// An object identifying the HTTP content. 
+        /// <param name="queryParams">
+        /// A dictionary of query parameters to be added to the URL.
+        /// </param>
+        /// </param>
+        /// <param name="cancellationToken">
+        /// Cancellation Token that can cancel asynchronous operation
         /// </param>
         /// <returns>
+        /// The content of the response as a <see cref="MemoryStream"/>.
         /// </returns>
-        internal async Task PostAsync(Namespace ns, ResourceName resource, dynamic content = null)
+        internal async Task<Stream> GetStreamAsync(Namespace ns, ResourceName resource, Dictionary<string, string> queryParams = null, CancellationToken cancellationToken = default)
         {
-            await sendAsync(HttpMethod.Post, ns, resource, content).ConfigureAwait(false);
+            if (DateTime.UtcNow >= Credentials.BearerTokenExpiresAt.AddMilliseconds(UpdateBuffer.TotalMilliseconds))
+            {
+                await UpdateCredentials().ConfigureAwait(false);
+            }
+
+            var serviceUri = createServiceUriWithQueryParameter(ns, resource, queryParams);
+            using (var request = new HttpRequestMessage(HttpMethod.Get, serviceUri)) 
+            { 
+                request.Headers.Add("Authorization", $"Bearer {Credentials.BearerToken}");
+
+                using (var response = await HttpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false))
+                {
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        await throwRequestExceptionAsync(response).ConfigureAwait(false);
+                    }
+
+                    using (var responseStream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false))
+                    {
+                        var memoryStream = new MemoryStream();
+                        await responseStream.CopyToAsync(memoryStream).ConfigureAwait(false);
+                        memoryStream.Position = 0;
+                        return memoryStream;
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Sends a GET request with query parameters and processes the response as an asynchronous operation.
+        /// </summary>
+        /// <param name="ns">
+        /// An object identifying a Trulioo services namespace.
+        /// </param>
+        /// <param name="resource">
+        /// An object identifying a resource.
+        /// </param>
+        /// <param name="queryParams">
+        /// A dictionary of query parameters to be added to the URL.
+        /// </param>
+        /// <param name="processResponse">
+        /// A function to handle the returned message.
+        /// </param>
+        /// <returns>
+        /// The response to the GET request after being processed.
+        /// </returns>
+        internal async Task<TReturn> GetAsyncWithQueryParams<TReturn>(Namespace ns, ResourceName resource, Dictionary<string, string> queryParams = null, Func<HttpResponseMessage, TReturn> processResponse = null, CancellationToken cancellationToken = default)
+        {
+            if (DateTime.UtcNow >= Credentials.BearerTokenExpiresAt.AddMilliseconds(UpdateBuffer.TotalMilliseconds))
+            {
+                await UpdateCredentials().ConfigureAwait(false);
+            }
+
+            var serviceUri = createServiceUriWithQueryParameter(ns, resource, queryParams);
+            using (var request = new HttpRequestMessage(HttpMethod.Get, serviceUri))
+            {
+                request.Headers.Add("Authorization", $"Bearer {Credentials.BearerToken}");
+
+                using (var response = await HttpClient.SendAsync(request, HttpCompletionOption.ResponseContentRead, cancellationToken).ConfigureAwait(false))
+                {
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        await throwRequestExceptionAsync(response).ConfigureAwait(false);
+                    }
+
+                    if (processResponse != null)
+                    {
+                        return processResponse(response);
+                    }
+
+                    var rawMessage = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                    return typeof(TReturn) == typeof(string) ? (TReturn)(object)rawMessage : JsonConvert.DeserializeObject<TReturn>(rawMessage);
+                }
+            }
         }
 
         /// <summary>
@@ -188,12 +273,39 @@ namespace Trulioo.Client.V3
         /// <param name="content">
         /// An object identifying the HTTP content. 
         /// </param>
+        /// </param>
+        /// <param name="cancellationToken">
+        /// Cancellation Token that can cancel asynchronous operation
+        /// </param>
+        /// <returns>
+        /// </returns>
+        internal async Task PostAsync(Namespace ns, ResourceName resource, dynamic content = null, CancellationToken cancellationToken = default)
+        {
+            await sendAsync(HttpMethod.Post, ns, resource, content, cancellationToken).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Sends a POST request as an asynchronous operation.
+        /// </summary>
+        /// <param name="ns">
+        /// An object identifying a Trulioo services namespace.
+        /// </param>
+        /// <param name="resource">
+        /// An object identifying a resource.
+        /// </param>
+        /// <param name="content">
+        /// An object identifying the HTTP content. 
+        /// </param>
+        /// </param>
+        /// <param name="cancellationToken">
+        /// Cancellation Token that can cancel asynchronous operation
+        /// </param>
         /// <returns>
         /// The response to the POST request.
         /// </returns>
-        internal async Task<TReturn> PostAsync<TReturn>(Namespace ns, ResourceName resource, dynamic content = null)
+        internal async Task<TReturn> PostAsync<TReturn>(Namespace ns, ResourceName resource, dynamic content = null, CancellationToken cancellationToken = default)
         {
-            var response = await sendAsync<TReturn>(HttpMethod.Post, ns, resource, content).ConfigureAwait(false);
+            var response = await sendAsync<TReturn>(HttpMethod.Post, ns, resource, content, cancellationToken: cancellationToken).ConfigureAwait(false);
             return response;
         }
 
@@ -209,11 +321,15 @@ namespace Trulioo.Client.V3
         /// <param name="content">
         /// An object identifying the HTTP content. 
         /// </param>
+        /// </param>
+        /// <param name="cancellationToken">
+        /// Cancellation Token that can cancel asynchronous operation
+        /// </param>
         /// <returns>
         /// </returns>
-        internal async Task PutAsync(Namespace ns, ResourceName resource, dynamic content = null)
+        internal async Task PutAsync(Namespace ns, ResourceName resource, dynamic content = null, CancellationToken cancellationToken = default)
         {
-            await sendAsync(HttpMethod.Put, ns, resource, content).ConfigureAwait(false);
+            await sendAsync(HttpMethod.Put, ns, resource, content, cancellationToken).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -228,11 +344,15 @@ namespace Trulioo.Client.V3
         /// <param name="content">
         /// An object identifying the HTTP content. 
         /// </param>
+        /// </param>
+        /// <param name="cancellationToken">
+        /// Cancellation Token that can cancel asynchronous operation
+        /// </param>
         /// <returns>
         /// </returns>
-        internal async Task DeleteAsync(Namespace ns, ResourceName resource, dynamic content = null)
+        internal async Task DeleteAsync(Namespace ns, ResourceName resource, dynamic content = null, CancellationToken cancellationToken = default)
         {
-            await sendAsync(HttpMethod.Delete, ns, resource, content).ConfigureAwait(false);
+            await sendAsync(HttpMethod.Delete, ns, resource, content, cancellationToken).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -301,15 +421,34 @@ namespace Trulioo.Client.V3
             return uri;
         }
 
+        private Uri createServiceUriWithQueryParameter(Namespace ns, ResourceName resource, Dictionary<string, string> queryParams)
+        {
+            var serviceUri = createServiceUri(ApiHost, ns, resource);
+
+            if (queryParams != null && queryParams.Any())
+            {
+                var uriBuilder = new UriBuilder(serviceUri);
+                var query = HttpUtility.ParseQueryString(uriBuilder.Query);
+                foreach (var param in queryParams)
+                {
+                    query[param.Key] = param.Value;
+                }
+                uriBuilder.Query = query.ToString();
+                serviceUri = uriBuilder.Uri;
+            }
+
+            return serviceUri;
+        }
+
         private async Task<TReturn> sendAsync<TReturn>(HttpMethod httpMethod, Namespace ns, ResourceName resource,
-            dynamic content = null, Func<HttpResponseMessage, TReturn> processResponse = null)
+            dynamic content = null, Func<HttpResponseMessage, TReturn> processResponse = null, CancellationToken cancellationToken = default)
         {
             if (DateTime.UtcNow >= Credentials.BearerTokenExpiresAt.AddMilliseconds(UpdateBuffer.TotalMilliseconds))
             {
                 await UpdateCredentials().ConfigureAwait(false);
             }
 
-            var response = await sendInternalAsync(httpMethod, ns, resource, content).ConfigureAwait(false);
+            var response = await sendInternalAsync(httpMethod, ns, resource, content, cancellationToken).ConfigureAwait(false);
             if (processResponse != null)
             {
                 return processResponse(response);
@@ -319,16 +458,16 @@ namespace Trulioo.Client.V3
             return typeof(TReturn) == typeof(string) ? rawMessage : JsonConvert.DeserializeObject<TReturn>(rawMessage);
         }
 
-        private async Task<HttpResponseMessage> sendInternalAsync(HttpMethod httpMethod, Namespace ns, ResourceName resource, dynamic content = null)
+        private async Task<HttpResponseMessage> sendInternalAsync(HttpMethod httpMethod, Namespace ns, ResourceName resource, dynamic content = null, CancellationToken cancellationToken = default)
         {
-            var serviceUri = createServiceUri($"{ApiHost}/{_version}", ns, resource);
+            var serviceUri = createServiceUri(ApiHost, ns, resource);
             var stringContent = getStringContent(content);
 
             using (var request = new HttpRequestMessage(httpMethod, serviceUri) { Content = stringContent })
             {
                 request.Headers.Add("Authorization", $"Bearer {Credentials.BearerToken}");
                 
-                var response = await HttpClient.SendAsync(request, HttpCompletionOption.ResponseContentRead, CancellationToken.None).ConfigureAwait(false);
+                var response = await HttpClient.SendAsync(request, HttpCompletionOption.ResponseContentRead, cancellationToken).ConfigureAwait(false);
                 if (!response.IsSuccessStatusCode)
                 {
                     await throwRequestExceptionAsync(response).ConfigureAwait(false);

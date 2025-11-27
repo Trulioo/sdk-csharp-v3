@@ -1,0 +1,124 @@
+﻿using Trulioo.Client.V3.Enums;
+using Trulioo.Client.V3.Models.Business;
+using Trulioo.Client.V3.Models.Fields;
+
+namespace Trulioo.Client.V3.Tests.MemberData
+{
+    public static class KybTestData
+    {
+        public static IEnumerable<object[]> BusinessSearchTestData()
+        {
+            yield return new object[]
+            {
+                new BusinessSearchRequest {
+                    PackageId = BaseFact.PackageId,
+                    SearchType = VerificationType.Test,
+                    CountryCode = "CA",
+                    Timeout = 100,
+                    Business = new BusinessSearchModel
+                    {
+                        BusinessName = "businessname",
+                        JurisdictionOfIncorporation = "BC",
+                        Website = "website",
+                        Location = new Location()
+                    }
+                },
+                new BusinessSearchResponse
+                {
+                    TransactionID = "",
+                    CountryCode = "",
+                    Record = new BusinessRecord
+                    {
+                        RecordStatus = "",
+                        DatasourceResults = new List<BusinessSearchResult>{
+                            new BusinessSearchResult {
+                                DatasourceName = "",
+                                Results = new List<BusinessResult>
+                                {
+                                    new BusinessResult
+                                    {
+                                        BusinessName = "",
+                                        BusinessRegistrationNumber = "",
+                                        JurisdictionOfIncorporation = ""
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            };
+        }
+
+        public static IEnumerable<object[]> BusinessVerifyTestData()
+        {
+            yield return new object[]
+            {
+                new BusinessVerifyRequest
+                {
+                    PackageId = BaseFact.PackageId,
+                    VerificationType = VerificationType.Test,
+                    VerboseMode = true,
+                    CountryCode = "CA",
+                    BusinessDataFields = new BusinessDataFields
+                    {
+                        BusinessName = "BusinessName",
+                        TradestyleName = "TradestyleName",
+                        TaxIDNumber = "TaxIDNumber",
+                        BusinessRegistrationNumber = "BusinessRegistrationNumber",
+                        DayOfIncorporation = 1,
+                        MonthOfIncorporation = 2,
+                        YearOfIncorporation = 2003,
+                        JurisdictionOfIncorporation = "JurisdictionOfIncorporation",
+                        ShareholderListDocument = true,
+                        FinancialInformationDocument = true,
+                        EnhancedProfile = true,
+                        DunsNumber = "DunsNumber",
+                        Entities = true,
+                        PeopleOfSignificantControl = new List<PersonOfSignificantControl>
+                        {
+                            new PersonOfSignificantControl
+                            {
+                                FirstGivenName = "FirstGivenName",
+                                MiddleName = "MiddleName",
+                                FirstSurName = "FirstSurName",
+                                SecondSurname = "SecondSurname",
+                                FullName = "FullName",
+                                BusinessName = "BusinessName",
+                                YearOfBirth = "YearOfBirth",
+                                MonthOfBirth = "MonthOfBirth",
+                                DayOfBirth = "DayOfBirth",
+                            }
+                        },
+                        Filings = true,
+                        ArticleOfAssociation = true,
+                        RegistrationDetails = true,
+                        AnnualReport = true,
+                        RegisterReport = true,
+                        CreditCheck = true,
+                        CreditReport = true,
+                        GISAExtract = true,
+                        VRExtract = true,
+                        RegisterCheck = true,
+                        TradeRegisterReport = true,
+                        BeneficialOwnersCheck = true,
+                        AnnualAccounts = true,
+                        FiledChanges = true,
+                        FiledDocuments = true,
+                        CompletePlus = true,
+                        ArticleOfAuthority = true,
+                        AgentAddressChange = true,
+                        Location = new List<BusinessLocation>
+                        {
+                            new BusinessLocation
+                            {
+                                Index = 1,
+                                Address1 = "1234 Main Street",
+                                Country = "CA"
+                            }
+                        }
+                    }
+                },
+            };
+        }
+    }
+}

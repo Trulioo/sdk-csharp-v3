@@ -1,4 +1,6 @@
-﻿namespace Trulioo.Client.V3
+﻿using Trulioo.Client.V3.Products;
+
+namespace Trulioo.Client.V3
 {
     public interface ITruliooApiClient
     {
@@ -17,6 +19,16 @@
         /// Gets the <see cref="Verification"/> instance for this <see cref="ITruliooApiClient"/>.
         /// </summary>
         Verification Verification { get; }
+        /// <summary>
+        /// Gets the <see cref="Configuration"/> instance for this <see cref="ITruliooApiClient"/>.
+        /// </summary>
+        Configuration Configuration { get; }
+        /// <summary>
+        /// Gets the <see cref="V3.Products.Kyb"/> instance for this <see cref="ITruliooApiClient"/>.
+        /// </summary>
+        Kyb Kyb { get; }
+
+        PersonFraud PersonFraud { get; }
 
         #endregion
     }

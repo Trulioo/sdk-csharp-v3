@@ -1,6 +1,7 @@
-﻿using Trulioo.Client.V3.Enums;
+using Trulioo.Client.V3.Enums;
 using Trulioo.Client.V3.Models.Business;
 using Trulioo.Client.V3.Models.Fields;
+using Trulioo.Client.V3.Tests.MemberData;
 using Xunit;
 
 namespace Trulioo.Client.V3.Tests
@@ -8,7 +9,7 @@ namespace Trulioo.Client.V3.Tests
     public class BusinessFacts
     {
         [Theory(Skip = "Calls API")]
-        [MemberData(nameof(BusinessSearchTestData))]
+        [MemberData(nameof(KybTestData.BusinessSearchTestData), MemberType = typeof(KybTestData))]
         public async void BusinessSearchTest(BusinessSearchRequest request, BusinessSearchResponse expectedResponse)
         {
             //Arrange
@@ -80,49 +81,6 @@ namespace Trulioo.Client.V3.Tests
 
 
         #region Member Data
-
-        public static IEnumerable<object[]> BusinessSearchTestData()
-        {
-            yield return new object[]
-            {
-                new BusinessSearchRequest {
-                    PackageId = BaseFact.PackageId,
-                    SearchType = VerificationType.Test,
-                    CountryCode = "CA",
-                    Timeout = 100,
-                    Business = new BusinessSearchModel
-                    {
-                        BusinessName = "businessname",
-                        JurisdictionOfIncorporation = "BC",
-                        Website = "website",
-                        Location = new Location()
-                    }
-                },
-                new BusinessSearchResponse
-                {
-                    TransactionID = "",
-                    CountryCode = "",
-                    Record = new BusinessRecord
-                    {
-                        RecordStatus = "",
-                        DatasourceResults = new List<BusinessSearchResult>{ 
-                            new BusinessSearchResult {
-                                DatasourceName = "",
-                                Results = new List<BusinessResult>
-                                {
-                                    new BusinessResult
-                                    {
-                                        BusinessName = "",
-                                        BusinessRegistrationNumber = "",
-                                        JurisdictionOfIncorporation = ""
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            };
-        }
 
         public static IEnumerable<object[]> BusinessVerifyTestData()
         {

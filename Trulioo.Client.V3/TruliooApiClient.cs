@@ -1,7 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
+using Trulioo.Client.V3.Products;
 
 namespace Trulioo.Client.V3
 {
@@ -34,10 +33,17 @@ namespace Trulioo.Client.V3
         /// </summary>
         public Configuration Configuration { get; }
 
+        /// <summary>
+        /// Gets the <see cref="V3.Products.Kyb"/> instance for this <see cref="TruliooApiClient"/>.
+        /// </summary>
+        public Kyb Kyb { get; }
+
+        public PersonFraud PersonFraud { get; }
+
         #endregion
 
         #region Private Fields
-        
+
         private bool _disposed;
 
         #endregion
@@ -60,6 +66,8 @@ namespace Trulioo.Client.V3
             Verification = new Verification(this);
             Connection = new Connection(this);
             Configuration = new Configuration(this);
+            Kyb = new Kyb(this);
+            PersonFraud = new PersonFraud(this);
         }
 
         /// <summary>

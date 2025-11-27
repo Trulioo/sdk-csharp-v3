@@ -17,7 +17,7 @@ namespace Trulioo.Client.V3
         private const string _defaultDocumentFilename = "downloadDocument.pdf";
 
         private TruliooApiClient _service;
-        private readonly Namespace _verificationNamespace = new Namespace("verifications");
+        private readonly Namespace _verificationNamespace = new Namespace("v3/verifications");
 
         private Context _context
         {
@@ -86,6 +86,7 @@ namespace Trulioo.Client.V3
         /// </summary>
         /// <param name="transactionId">id of the asynchronous transaction, this will be a GUID</param>
         /// <returns>Partial Verify Result</returns>
+        [Obsolete("This class is deprecated. Use Kyb.GetPartialResultsAsync() instead.")]
         public async Task<VerifyResultPartial> GetPartialResultsAsync(string transactionRecordId)
         {
             var resource = new ResourceName("transaction", transactionRecordId, "partialresult");
@@ -99,6 +100,7 @@ namespace Trulioo.Client.V3
         /// <param name="transactionRecordId">id of the transactionrecord, this will be a GUID</param>
         /// <param name="fieldName">document field name</param>
         /// <returns>document</returns>
+        [Obsolete("This class is deprecated. Use Kyb.GetDocumentDownloadAsync() instead.")]
         public async Task<DownloadDocument> GetDocumentDownloadAsync(string transactionRecordId, string fieldName)
         {
             var resource = new ResourceName("documentdownload", transactionRecordId, fieldName);

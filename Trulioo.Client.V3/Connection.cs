@@ -11,7 +11,7 @@ namespace Trulioo.Client.V3
     {
         #region Fields/Properties
         private readonly TruliooApiClient _service;
-        private readonly Namespace _connectionNamespace = new Namespace("connection");
+        private readonly Namespace _connectionNamespace = new Namespace("v3/connection");
 
         private Context _context
         {

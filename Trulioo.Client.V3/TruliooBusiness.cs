@@ -11,12 +11,13 @@ namespace Trulioo.Client.V3
     /// <summary>
     /// Provides a class for working with Trulioo Business.
     /// </summary>
+    [Obsolete("This class is deprecated. Use Kyb instead.")]
     public class TruliooBusiness
     {
         #region Private Properties
 
         private TruliooApiClient _service;
-        private readonly Namespace _businessNamespace = new Namespace("business");
+        private readonly Namespace _businessNamespace = new Namespace("v3/business");
 
         private Context _context
         {
@@ -51,6 +52,7 @@ namespace Trulioo.Client.V3
         /// </summary>
         /// <param name="request"> Request object containing parameters to search for </param>
         /// <returns> List of possible businesses from search </returns>
+        [Obsolete("This class is deprecated. Use Kyb.BusinessSearchAsync() instead.")]
         public async Task<BusinessSearchResponse> BusinessSearchAsync(BusinessSearchRequest request)
         {
             var resource = new ResourceName("search");
@@ -63,6 +65,7 @@ namespace Trulioo.Client.V3
         /// </summary>
         /// <param name="request"> Request object containing parameters to verify business </param>
         /// <returns> Verification results </returns>
+        [Obsolete("This class is deprecated. Use Kyb.BusinessVerifyAsync() instead.")]
         public async Task<VerifyResult> BusinessVerifyAsync(BusinessVerifyRequest request)
         {
             var resource = new ResourceName("verify");
@@ -76,6 +79,7 @@ namespace Trulioo.Client.V3
         /// </summary>
         /// <param name="countryCode"> Optional country alpha2 code </param>
         /// <returns>  </returns>
+        [Obsolete("This class is deprecated. Use Kyb.GetCountryJOIAsync() instead.")]
         public async Task<IEnumerable<CountrySubdivision>> GetCountryJOIAsync(string countryCode = null)
         {
             var resourceParams = new List<string> {"countryJOI", countryCode}.Where(x => !string.IsNullOrWhiteSpace(x));
@@ -91,6 +95,7 @@ namespace Trulioo.Client.V3
         /// <param name="countryCode"> Optional country alpha2 code </param>
         /// <param name="jurisdictionCode"> Optional jurisdiction code </param>
         /// <returns>  </returns>
+        [Obsolete("This class is deprecated. Use Kyb.GetBusinessRegistrationNumbersAsync() instead.")]
         public async Task<IEnumerable<BusinessRegistrationNumber>> GetBusinessRegistrationNumbersAsync(string countryCode = null, string jurisdictionCode = null)
         {
             if (string.IsNullOrWhiteSpace(countryCode) && !string.IsNullOrWhiteSpace(jurisdictionCode))

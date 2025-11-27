@@ -171,6 +171,31 @@ namespace Trulioo.Client.V3.Models.Business
         public string Telephone { get; set; }
 
         /// <summary>
+        /// Whether or not to trigger business monitoring auto-enrollment
+        /// </summary>
+        public bool KYBMonitoringEnabled { get; set; }
+
+        /// <summary>
+        /// Fields used for business monitoring
+        /// </summary>
+        public string KYBMonitoringFields { get; set; }
+
+        /// <summary>
+        /// Business monitoring polling frequency
+        /// </summary>
+        public string KYBMonitoringFrequency { get; set; }
+
+        /// <summary>
+        /// Business monitoring result callback endpoint
+        /// </summary>
+        public string KYBMonitoringCallbackURL { get; set; }
+
+        /// <summary>
+        /// Whether or not to fetch business monitoring results
+        /// </summary>
+        public bool? KYBMonitoringHistory { get; set; }
+
+        /// <summary>
         /// CountrySpecific fields
         /// {"Country" : {"Field1" : "Value",
         /// "Field2" : "Value"

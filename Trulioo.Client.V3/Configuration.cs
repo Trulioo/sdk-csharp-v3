@@ -16,7 +16,7 @@ namespace Trulioo.Client.V3
         #region Private Properties
 
         private TruliooApiClient _service;
-        private readonly Namespace _configurationNamespace = new Namespace("configuration");
+        private readonly Namespace _configurationNamespace = new Namespace("v3/configuration");
 
         private Context _context
         {
@@ -51,6 +51,7 @@ namespace Trulioo.Client.V3
         /// </summary>
         /// <param name="packageID">Package ID</param>
         /// <param name="countryCode">Call CountryCodes to get the countries available to you.</param>
+        [Obsolete("This class is deprecated. Use PersonFraud.GetConsentsAsync() instead.")]
         public async Task<IEnumerable<string>> GetСonsentsAsync(string packageID, string countryCode)
         {
             var resourceParams = new List<string> { "consents", packageID, countryCode };
@@ -67,6 +68,7 @@ namespace Trulioo.Client.V3
         ///</summary>
         /// <param name="packageID">Call packageID to get the countries available to you.</param>
         /// <param name="countryCode">Call CountryCodes to get the countries available to you.</param>
+        [Obsolete("This class is deprecated. Use PersonFraud.GetDetailedСonsentsAsync() instead.")]
         public async Task<IEnumerable<Consent>> GetDetailedСonsentsAsync(string packageID, string countryCode)
         {
             var resourceParams = new List<string> { "consents", packageID, countryCode, "detail" };
@@ -79,6 +81,7 @@ namespace Trulioo.Client.V3
         /// This method retrieves all the country codes for given packageID
         /// </summary>
         /// <param name="packageID">Package ID</param>
+        [Obsolete("This class is deprecated. Use PersonFraud.GetCountryCodesAsync() or Kyb.GetCountryCodesAsync() instead.")]
         public async Task<IEnumerable<string>> GetCountryCodesAsync(string packageID)
         {
             var resourceParams = new List<string> { "countrycodes", packageID };
@@ -90,7 +93,8 @@ namespace Trulioo.Client.V3
         /// <summary>
         /// Gets the provinces states or other subdivisions for a country, mostly matches ISO 3166-2
         /// </summary>
-        /// /// <param name="countryCode">Country alpha2 code, get the the call to countrycodes</param>
+        /// <param name="countryCode">Country alpha2 code, get the call to countrycodes</param>
+        [Obsolete("This class is deprecated. Use PersonFraud.GetCountrySubdivisionsAsync() or Kyb.GetCountrySubdivisionsAsync() instead.")]
         public async Task<IEnumerable<CountrySubdivision>> GetCountrySubdivisionsAsync(string countryCode)
         {
             var resource = new ResourceName("countrysubdivisions", countryCode);
@@ -101,8 +105,9 @@ namespace Trulioo.Client.V3
         /// <summary>
         /// This method retrieves all the fields codes for given packageID
         /// </summary>
-        /// <param name="packageID">Call packageID to get the countries available to you.</param>
+        /// <param name="packageID">PackageID</param>
         /// <param name="countryCode">Call CountryCodes to get the countries available to you.</param>
+        [Obsolete("This class is deprecated. Use PersonFraud.GetFieldsAsync() or Kyb.GetFieldsAsync() instead.")]
         public async Task<Dictionary<string, dynamic>> GetFieldsAsync(string packageID, string countryCode)
         {
             var resourceParams = new List<string> { "fields", packageID, countryCode };
@@ -117,6 +122,7 @@ namespace Trulioo.Client.V3
         /// <param name="packageID">Package ID</param>
         /// <param name="countryCode">Call CountryCodes to get the countries available to you.</param>available to you.</param>
         /// <param name="configurationName">Identity Verification</param>
+        [Obsolete("This class is deprecated. Use PersonFraud.GetRecommendedFieldsAsync() instead.")]
         public async Task<Dictionary<string, dynamic>> GetRecommendedFieldsAsync(string packageID, string countryCode)
         {
             var resourceParams = new List<string> { "fields", packageID, countryCode, "recommended" };
@@ -131,6 +137,7 @@ namespace Trulioo.Client.V3
         /// <param name="packageID"></param>
         /// <param name="countryCode">Call CountryCodes to get the countries available to you.</param>
         /// <returns></returns>
+        [Obsolete("This class is deprecated. Use PersonFraud.GetTestEntitiesAsync() or Kyb.GetTestEntitiesAsync() instead.")]
         public async Task<IEnumerable<TestEntityDataFields>> GetTestEntitiesAsync(string packageID, string countryCode)
         {
             var resourceParams = new List<string> { "testentities", packageID, countryCode };
@@ -145,6 +152,7 @@ namespace Trulioo.Client.V3
         /// <param name="packageID">Package ID</param>
         /// <param name="countryCode">Call CountryCodes to get the countries available to you.</param>
         /// <returns></returns>
+        [Obsolete("This class is deprecated. Use PersonFraud.GetDatasourcesAsync() instead.")]
         public async Task<IEnumerable<NormalizedDatasourceGroupCountry>> GetDatasourcesAsync(string packageID, string countryCode)
         {
             var resourceParams = new List<string> { "datasources", packageID, countryCode };

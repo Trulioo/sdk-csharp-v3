@@ -54,7 +54,7 @@ namespace Trulioo.Client.V3.URI
         /// </returns>
         public string ToUriString()
         {
-            return ToString(Uri.EscapeDataString);
+            return ToString(Uri.EscapeUriString);
         }
 
         string ToString(Func<string, string> encode)

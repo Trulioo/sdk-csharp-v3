@@ -1,5 +1,7 @@
 # Trulioo SDK for C# Changelog
 
+## Version 1.0.36.0
+Auto update version
 
 ## Version 1.0.11.0
 Fix typo in download document filename

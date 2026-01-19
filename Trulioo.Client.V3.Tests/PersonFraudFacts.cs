@@ -2,6 +2,7 @@ using Trulioo.Client.V3.Enums;
 using Trulioo.Client.V3.Models.Fields;
 using Trulioo.Client.V3.Models.LocationFields;
 using Trulioo.Client.V3.Models.Risk;
+using Trulioo.Client.V3.Models.Verification;
 using Xunit;
 
 namespace Trulioo.Client.V3.Tests
@@ -101,6 +102,46 @@ namespace Trulioo.Client.V3.Tests
             Assert.NotEmpty(response);
         }
 
+        [Fact(Skip = "Calls API")]
+        public async Task PersonFraudGetAccountPackagesTest()
+        {
+            using var client = await BaseFact.GetTruliooClientAsync();
+            var response = await client.PersonFraud.GetAccountPackagesAsync();
+
+            Assert.NotNull(response);
+            Assert.NotEmpty(response);
+        }
+
+        [Fact(Skip = "Calls API")]
+        public async Task PersonFraudSayHelloTest()
+        {
+            using var client = await BaseFact.GetTruliooClientAsync();
+            var response = await client.PersonFraud.SayHelloAsync("");
+
+            Assert.NotNull(response);
+            Assert.NotEmpty(response);
+        }
+
+        [Fact(Skip = "Calls API")]
+        public async Task PersonFraudTestAuthenticationTest()
+        {
+            using var client = await BaseFact.GetTruliooClientAsync();
+            var response = await client.PersonFraud.TestAuthenticationAsync();
+
+            Assert.NotNull(response);
+            Assert.NotEmpty(response);
+        }
+
+        [Theory(Skip = "Calls API")]
+        [MemberData(nameof(TransactionStatusTestData))]
+        public async Task AsyncCallbackTest(TransactionStatus transactionStatus)
+        {
+            using var client = await BaseFact.GetTruliooClientAsync();
+            var response = await client.PersonFraud.AsyncCallbackAsync(transactionStatus);
+
+            Assert.NotNull(response);
+        }
+
         public static IEnumerable<object[]> RiskVerifyTestData()
         {
             yield return new object[]
@@ -142,6 +183,18 @@ namespace Trulioo.Client.V3.Tests
                         }
                     },
                     VerboseMode = true
+                }
+            };
+        }
+
+        public static IEnumerable<object[]> TransactionStatusTestData()
+        {
+            yield return new object[]
+            {
+                new TransactionStatus
+                {
+                    TransactionId = "",
+                    IsTimedOut = false
                 }
             };
         }

@@ -38,7 +38,20 @@ namespace Trulioo.Client.V3
         /// </summary>
         public Kyb Kyb { get; }
 
+        /// <summary>
+        /// Gets the <see cref="V3.Products.PersonFraud"/> instance for this <see cref="TruliooApiClient"/>.
+        /// </summary>
         public PersonFraud PersonFraud { get; }
+
+        /// <summary>
+        /// Gets the <see cref="V3.Products.Watchlist"/> instance for this <see cref="TruliooApiClient"/>.
+        /// </summary>
+        public Watchlist Watchlist { get; }
+
+        /// <summary>
+        /// Gets the <see cref="V3.Products.Kyc"/> instance for this <see cref="TruliooApiClient"/>.
+        /// </summary>
+        public Kyc Kyc { get; }
 
         #endregion
 
@@ -68,6 +81,8 @@ namespace Trulioo.Client.V3
             Configuration = new Configuration(this);
             Kyb = new Kyb(this);
             PersonFraud = new PersonFraud(this);
+            Watchlist = new Watchlist(this);
+            Kyc = new Kyc(this);
         }
 
         /// <summary>

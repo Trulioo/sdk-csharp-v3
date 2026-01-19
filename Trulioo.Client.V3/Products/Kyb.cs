@@ -2,10 +2,11 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Net.Http;
 using System.Linq;
+using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using Trulioo.Client.V3.Helpers;
 using Trulioo.Client.V3.Models.Business;
 using Trulioo.Client.V3.Models.Fields;
 using Trulioo.Client.V3.Models.Verification;
@@ -112,7 +113,7 @@ namespace Trulioo.Client.V3.Products
                 queryParams.Add("additionalData", "true");
             }
 
-            var response = await Context.GetAsyncWithQueryParams(_kybNameSpace, resource, queryParams, processResponse: parseDownloadDocumentResponse, cancellationToken).ConfigureAwait(false);
+            var response = await Context.GetAsyncWithQueryParams(_kybNameSpace, resource, queryParams, processResponse: DownloadDocumentHelper.ParseDownloadDocumentResponseAsync, cancellationToken).ConfigureAwait(false);
             return await response;
         }
 
@@ -244,30 +245,8 @@ namespace Trulioo.Client.V3.Products
         public async Task<DownloadDocument> GetDocumentDownloadAsync(string transactionRecordId, string fieldName, CancellationToken cancellationToken = default)
         {
             var resource = new ResourceName(_version, "verifications", "documentdownload", transactionRecordId, fieldName);
-            var response = await Context.GetAsync(_kybNameSpace, resource, processResponse: parseDownloadDocumentResponse, cancellationToken: cancellationToken).ConfigureAwait(false);
+            var response = await Context.GetAsync(_kybNameSpace, resource, processResponse: DownloadDocumentHelper.ParseDownloadDocumentResponseAsync, cancellationToken: cancellationToken).ConfigureAwait(false);
             return await response;
-        }
-
-
-        #endregion
-
-        #region Privates/internals
-
-        private async Task<DownloadDocument> parseDownloadDocumentResponse(HttpResponseMessage response)
-        {
-            var rawMessage = await response.Content.ReadAsByteArrayAsync().ConfigureAwait(false);
-
-            var filename = "downloadDocument.pdf";
-            if (!string.IsNullOrEmpty(response.Content.Headers.ContentDisposition?.FileName))
-            {
-                filename = response.Content.Headers.ContentDisposition.FileName;
-            }
-
-            return new DownloadDocument
-            {
-                DocumentName = filename,
-                DocumentContent = rawMessage
-            };
         }
 
         #endregion

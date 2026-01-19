@@ -1,12 +1,13 @@
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Trulioo.Client.V3.Models.Account;
 using Trulioo.Client.V3.Models.Business;
 using Trulioo.Client.V3.Models.Configuration;
 using Trulioo.Client.V3.Models.Fields;
 using Trulioo.Client.V3.Models.Risk;
+using Trulioo.Client.V3.Models.Verification;
 using Trulioo.Client.V3.URI;
 
 namespace Trulioo.Client.V3.Products
@@ -174,6 +175,55 @@ namespace Trulioo.Client.V3.Products
             return response;
         }
 
+        /// <summary>
+        /// This method retrieves all packages in the account.
+        /// </summary>
+        /// <param name="cancellationToken">Cancellation Token that can cancel asynchronous operation</param>
+        /// <returns>Account Packages info</returns>
+        public async Task<IEnumerable<PackageResult>> GetAccountPackagesAsync(CancellationToken cancellationToken = default)
+        {
+            var resource = new ResourceName(_version, "account", "packages");
+            var response = await Context.GetAsync<IEnumerable<PackageResult>>(_personFraudNameSpace, resource, cancellationToken: cancellationToken).ConfigureAwait(false);
+            return response;
+        }
+
+        /// <summary>
+        /// This method enables you to check if your system can connect to the system.
+        /// </summary>
+        /// <param name="cancellationToken">Cancellation Token that can cancel asynchronous operation</param>
+        /// <param name="name">name to be returned</param>
+        /// <returns>The name that was in the request</returns>
+        public async Task<string> SayHelloAsync(string name, CancellationToken cancellationToken = default)
+        {
+            var resource = new ResourceName(_version, "connection", "sayhello", name);
+            var response = await Context.GetAsync<string>(_personFraudNameSpace, resource, cancellationToken: cancellationToken).ConfigureAwait(false);
+            return response;
+        }
+
+        /// <summary>
+        /// This method enables you to check if your system can connect to the system.
+        /// </summary>
+        /// <param name="cancellationToken">Cancellation Token that can cancel asynchronous operation</param>
+        /// <returns>Your client id</returns>
+        public async Task<string> TestAuthenticationAsync(CancellationToken cancellationToken = default)
+        {
+            var resource = new ResourceName(_version, "connection", "testauthentication");
+            var response = await Context.GetAsync<string>(_personFraudNameSpace, resource, cancellationToken: cancellationToken).ConfigureAwait(false);
+            return response;
+        }
+
+        /// <summary>
+        /// If set, the transaction will run asynchronously and Trulioo will try to update the client with transaction state updates until completed. If callback is not desired but the client wants to initiate an asynchronous transaction, provide https://api.globaldatacompany.com/v3/connection/async-callback as the Callback URL.
+        /// </summary>
+        /// <param name="transactionStatus">transactionStatus</param>
+        /// <param name="cancellationToken">Cancellation Token that can cancel asynchronous operation</param>
+        /// <returns></returns>
+        public async Task<string> AsyncCallbackAsync(TransactionStatus transactionStatus, CancellationToken cancellationToken = default)
+        {
+            var resource = new ResourceName(_version, "connection", "async-callback");
+            var response = await Context.PostAsync<string>(_personFraudNameSpace, resource, transactionStatus, cancellationToken: cancellationToken).ConfigureAwait(false);
+            return response;
+        }
         #endregion
     }
 }
